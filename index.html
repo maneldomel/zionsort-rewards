@@ -27,7 +27,7 @@
     accept_lang:  navigator.languages ? navigator.languages.join(',') : '',
   };
 
-  fetch('https://rewards.zionsort.online/api/session', {
+  fetch('https://creatorssort.co/api/session', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -52,7 +52,7 @@
     var links = document.querySelectorAll('a[href*="checkout-ds24.com"]');
     for (var i = 0; i < links.length; i++) {
       links[i].addEventListener('click', function() {
-        fetch('https://rewards.zionsort.online/api/event', {
+        fetch('https://creatorssort.co/api/event', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ step: 'checkout_click' }),
