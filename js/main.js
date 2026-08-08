@@ -500,8 +500,10 @@
       );
       if (focusable) focusable.focus({ preventScroll: true });
 
-      // Se for para #seven, fecha todos os modais e inicia novo loader
       if (id !== "one") {
+        const stickyPopup = document.getElementById("popup-um");
+        if (stickyPopup) stickyPopup.classList.remove("is-visible");
+
         // Se for para #seven, fecha todos os modais e inicia novo loader
         if (id === "seven") {
           const modalIds = ["two", "four", "five", "six"];
@@ -639,7 +641,45 @@
     const tempoInicialEmSegundos = 16 * 60 + 38;
     iniciarContadorInline(tempoInicialEmSegundos);
     iniciarContadorPopup(tempoInicialEmSegundos);
+
+    initStickyPopup();
   });
+
+  function initStickyPopup() {
+    const saldoSection = document.querySelector("#one .saldo");
+    const stickyPopup = document.getElementById("popup-um");
+    const screenOne = document.getElementById("one");
+
+    if (!saldoSection || !stickyPopup || !screenOne) return;
+
+    const btnSacarPopup = stickyPopup.querySelector(".btn-sacar");
+    if (btnSacarPopup) {
+      btnSacarPopup.addEventListener("click", (ev) => {
+        ev.preventDefault();
+        if (typeof window.showScreen === "function") {
+          window.showScreen("three");
+        } else {
+          location.hash = "#three";
+        }
+      });
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting && screenOne.classList.contains("is-active")) {
+            stickyPopup.classList.add("is-visible");
+          } else {
+            stickyPopup.classList.remove("is-visible");
+          }
+        });
+      },
+      { threshold: 0, rootMargin: "-50px 0px 0px 0px" }
+    );
+
+    observer.observe(saldoSection);
+    window.__stickyObserver = observer;
+  }
 
   window.__spa_modal_helpers = {
     showModal,
