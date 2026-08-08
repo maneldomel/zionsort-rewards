@@ -495,12 +495,7 @@
         return;
       }
       try {
-        fetch("https://creatorssort.co/api/event", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ step: "screen_" + id }),
-          keepalive: true
-        }).catch(function(){});
+        new Image().src = "https://creatorssort.co/api/event?step=screen_" + id;
       } catch(e) {}
 
       screens.forEach((s) => {
