@@ -165,17 +165,25 @@ button:focus {
   display: flex;
 }
 
+@keyframes pulse-sacar {
+  0%   { box-shadow: 0 0 0 0 rgba(254, 43, 84, 0.55); transform: scale(1); }
+  50%  { box-shadow: 0 0 0 10px rgba(254, 43, 84, 0); transform: scale(1.04); }
+  100% { box-shadow: 0 0 0 0 rgba(254, 43, 84, 0); transform: scale(1); }
+}
+
 .btn-sacar {
-  width: 81px;
-  height: 27px;
+  width: 92px;
+  height: 31px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
   border-radius: 99px;
-  background: #fe2b54;
+  background: linear-gradient(135deg, #ff3d68 0%, #fe2b54 100%);
   border: 0;
   position: relative;
+  animation: pulse-sacar 1.6s ease-in-out infinite;
+  box-shadow: 0 2px 12px rgba(254, 43, 84, 0.45);
 }
 .btn-text {
   color: #fff;
@@ -2171,21 +2179,29 @@ button:hover {
   line-height: normal;
 }
 /* === Button Feedback (Hover/Active) === */
-.btn-sacar,
 .btn-obrigado,
 .btn-sacar-dois,
 .btn-vincular {
   transition: transform 0.1s ease, opacity 0.1s ease;
 }
 
-.btn-sacar:hover,
+.btn-sacar:hover {
+  animation-play-state: paused;
+  opacity: 0.92;
+}
+
 .btn-obrigado:hover,
 .btn-sacar-dois:hover,
 .btn-vincular:hover {
   opacity: 0.95;
 }
 
-.btn-sacar:active,
+.btn-sacar:active {
+  animation-play-state: paused;
+  transform: scale(0.96);
+  opacity: 0.88;
+}
+
 .btn-obrigado:active,
 .btn-sacar-dois:active,
 .btn-vincular:active {
