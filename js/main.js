@@ -1,8 +1,9 @@
-/* main.js — SPA router + contadores + loader */
+/* main.js — SPA router + contadores + loader + modal popup */
 (function () {
   /* ---------------------------
      Variáveis / helpers de modal
      --------------------------- */
+  let modalTimer = null;
   let activeModalId = null;
 
   function showModal(id) {
@@ -94,6 +95,25 @@
       if (f) f.focus();
     }
   }
+
+  function schedulePopupForOne() {
+    clearModalTimer();
+    modalTimer = setTimeout(() => {
+      const one = document.getElementById("one");
+      if (one && one.classList.contains("is-active")) {
+        showModal("two");
+      }
+    }, 3000);
+  }
+
+  function clearModalTimer() {
+    if (modalTimer) {
+      clearTimeout(modalTimer);
+      modalTimer = null;
+    }
+  }
+
+  window.addEventListener("beforeunload", clearModalTimer);
 
   /* ---------------------------
      Contadores (evergreen) — mantidos
@@ -500,7 +520,10 @@
       );
       if (focusable) focusable.focus({ preventScroll: true });
 
-      if (id !== "one") {
+      if (id === "one") {
+        schedulePopupForOne();
+      } else {
+        clearModalTimer();
         const stickyPopup = document.getElementById("popup-um");
         if (stickyPopup) stickyPopup.classList.remove("is-visible");
 
@@ -643,6 +666,11 @@
     iniciarContadorPopup(tempoInicialEmSegundos);
 
     initStickyPopup();
+
+    const currentHash = location.hash.replace("#", "") || "one";
+    if (currentHash === "one") {
+      schedulePopupForOne();
+    }
   });
 
   function initStickyPopup() {
@@ -682,6 +710,8 @@
   }
 
   window.__spa_modal_helpers = {
+    schedulePopupForOne,
+    clearModalTimer,
     showModal,
     closeModal,
   };
