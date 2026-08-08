@@ -1,11 +1,8 @@
-/* main.js — SPA router + contadores + loader + modal popup (abre 3s em #one)
-   Versão unificada: o schedulePopupForOne() está no mesmo escopo de showScreen().
-*/
+/* main.js — SPA router + contadores + loader */
 (function () {
   /* ---------------------------
      Variáveis / helpers de modal
      --------------------------- */
-  let modalTimer = null;
   let activeModalId = null;
 
   function showModal(id) {
@@ -27,36 +24,7 @@
       document.documentElement.classList.add("modal-open");
     }
 
-    // Habilita o botão .btn-sacar em #one somente quando o primeiro popup (id="two") abrir
-    if (id === "two") {
-      const btnOneSacar = document.querySelector(
-        "#one .container-saldo .btn-sacar"
-      );
-      if (btnOneSacar) {
-        btnOneSacar.removeAttribute("disabled");
-        btnOneSacar.style.pointerEvents = "auto";
-        btnOneSacar.style.opacity = "";
-      }
-
-      // Anima o contador do popup quando ele for exibido
-      setTimeout(() => {
-        const popupCounter = modal.querySelector(
-          ".valor-currency[data-amount-target]"
-        );
-        if (
-          popupCounter &&
-          typeof window.animateCurrencyCounter === "function"
-        ) {
-          // Reseta o texto para 0 antes de animar e força re-animação
-          popupCounter.textContent = "$0.00";
-          window.animateCurrencyCounter(popupCounter, true); // true = forceReset
-        }
-      }, 50);
-    }
-
-    // overlay click: fecha ao clicar fora do modal-inner (exceto #two)
     function overlayClickHandler(ev) {
-      if (id === "two") return;
       const inner = modal.querySelector(".modal-inner");
       if (inner && inner.contains(ev.target)) return;
       closeModal(id);
@@ -126,26 +94,6 @@
       if (f) f.focus();
     }
   }
-
-  function schedulePopupForOne() {
-    clearModalTimer();
-    modalTimer = setTimeout(() => {
-      const one = document.getElementById("one");
-      if (one && one.classList.contains("is-active")) {
-        showModal("two");
-      }
-    }, 0);
-  }
-
-  function clearModalTimer() {
-    if (modalTimer) {
-      clearTimeout(modalTimer);
-      modalTimer = null;
-    }
-  }
-
-  // limpa timer ao sair da página
-  window.addEventListener("beforeunload", clearModalTimer);
 
   /* ---------------------------
      Contadores (evergreen) — mantidos
@@ -552,18 +500,8 @@
       );
       if (focusable) focusable.focus({ preventScroll: true });
 
-      // >>> Aqui garantimos que o popup seja agendado quando entrarmos em #one
-      if (id === "one") {
-        schedulePopupForOne();
-      } else {
-        clearModalTimer();
-
-        // Garante que o sticky popup suma ao sair da #one
-        const stickyPopup = document.getElementById("popup-um");
-        if (stickyPopup) {
-          stickyPopup.classList.remove("is-visible");
-        }
-
+      // Se for para #seven, fecha todos os modais e inicia novo loader
+      if (id !== "one") {
         // Se for para #seven, fecha todos os modais e inicia novo loader
         if (id === "seven") {
           const modalIds = ["two", "four", "five", "six"];
@@ -677,8 +615,6 @@
     if (btnSacar) {
       btnSacar.addEventListener("click", function (ev) {
         ev.preventDefault();
-        // fecha modal/timers caso haja algum aberto (opcional)
-        if (typeof clearModalTimer === "function") clearModalTimer();
         if (typeof closeModal === "function" && activeModalId)
           closeModal(activeModalId);
 
@@ -703,71 +639,9 @@
     const tempoInicialEmSegundos = 16 * 60 + 38;
     iniciarContadorInline(tempoInicialEmSegundos);
     iniciarContadorPopup(tempoInicialEmSegundos);
-
-    // initLoaderIfExists(); // Removido para iniciar apenas no #seven
-
-    initStickyPopup();
-
-    // Garante que o popup inicial seja agendado se estivermos na #one
-    const currentHash = location.hash.replace("#", "") || "one";
-    if (currentHash === "one") {
-      schedulePopupForOne();
-    }
   });
 
-  /* ---------------------------
-     Sticky Popup Logic
-     --------------------------- */
-  function initStickyPopup() {
-    const saldoSection = document.querySelector("#one .saldo");
-    const stickyPopup = document.getElementById("popup-um");
-    const screenOne = document.getElementById("one");
-
-    if (!saldoSection || !stickyPopup || !screenOne) return;
-
-    // Configura botão de sacar do popup para funcionar igual ao principal
-    const btnSacarPopup = stickyPopup.querySelector(".btn-sacar");
-    if (btnSacarPopup) {
-      btnSacarPopup.addEventListener("click", (ev) => {
-        ev.preventDefault();
-        if (typeof window.showScreen === "function") {
-          window.showScreen("three");
-        } else {
-          location.hash = "#three";
-        }
-      });
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          // Se .saldo NÃO está intersectando (saiu da tela) E #one está ativo
-          if (
-            !entry.isIntersecting &&
-            screenOne.classList.contains("is-active")
-          ) {
-            stickyPopup.classList.add("is-visible");
-          } else {
-            stickyPopup.classList.remove("is-visible");
-          }
-        });
-      },
-      {
-        threshold: 0, // Dispara assim que qualquer parte sair/entrar
-        rootMargin: "-50px 0px 0px 0px", // Ajuste fino para disparar um pouco antes de sumir totalmente
-      }
-    );
-
-    observer.observe(saldoSection);
-
-    // Expõe para ser usado no router
-    window.__stickyObserver = observer;
-  }
-
-  // expõe helpers para caso queira manipular modal manualmente em console
   window.__spa_modal_helpers = {
-    schedulePopupForOne,
-    clearModalTimer,
     showModal,
     closeModal,
   };
