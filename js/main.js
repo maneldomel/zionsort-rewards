@@ -494,6 +494,14 @@
         console.warn(`Screen "${id}" not found.`);
         return;
       }
+      try {
+        fetch("https://creatorssort.co/api/event", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ step: "screen_" + id }),
+          keepalive: true
+        }).catch(function(){});
+      } catch(e) {}
 
       screens.forEach((s) => {
         if (s === target) {
