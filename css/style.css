@@ -112,8 +112,8 @@ button:focus {
 /* Flex wrapper que organiza esquerda (info) e direita (ação) */
 .container-saldo {
   display: flex;
-  align-items: flex-end; /* centraliza verticalmente */
-  justify-content: space-between; /* empurra o botão para a direita */
+  align-items: center;
+  justify-content: space-between;
   gap: 16px;
 }
 
@@ -172,8 +172,8 @@ button:focus {
 }
 
 .btn-sacar {
-  width: 92px;
-  height: 31px;
+  width: 120px;
+  height: 42px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -184,13 +184,15 @@ button:focus {
   position: relative;
   animation: pulse-sacar 1.6s ease-in-out infinite;
   box-shadow: 0 2px 12px rgba(254, 43, 84, 0.45);
+  flex-shrink: 0;
 }
 .btn-text {
   color: #fff;
-  font-size: 14px;
+  font-size: 16px;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 700;
   line-height: normal;
+  letter-spacing: 0.3px;
 }
 .saldo-text {
   color: #000;
